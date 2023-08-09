@@ -1,0 +1,453 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Dubbo学习笔记 | Adagio Blog</title><meta name="author" content="Adagio"><meta name="copyright" content="Adagio"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="一.Dubbo前置相关概念大型互联网项目架构目标衡量网站的性能指标: 响应时间:指执行一个请求从开始到最后收到响应数据所花费的总体时间。  并发数:指系统同时能处理的请求数量。  并发连接数:指的是客户端向服务器发起请求，并建立了TCP连接。每秒钟服务器连接的总TCP数量  请求数:也称为QPS(Query Per Second)指每秒多少请求.  并发用户数:单位时间内有多少用户    吞吐量:">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Dubbo学习笔记">
+<meta property="og:url" content="http://localhost:4000/2023/02/10/Dubbo/index.html">
+<meta property="og:site_name" content="Adagio Blog">
+<meta property="og:description" content="一.Dubbo前置相关概念大型互联网项目架构目标衡量网站的性能指标: 响应时间:指执行一个请求从开始到最后收到响应数据所花费的总体时间。  并发数:指系统同时能处理的请求数量。  并发连接数:指的是客户端向服务器发起请求，并建立了TCP连接。每秒钟服务器连接的总TCP数量  请求数:也称为QPS(Query Per Second)指每秒多少请求.  并发用户数:单位时间内有多少用户    吞吐量:">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://pic.adagio-project.icu/pic/%E5%A4%B4%E5%83%8F.png">
+<meta property="article:published_time" content="2023-02-10T01:16:55.000Z">
+<meta property="article:modified_time" content="2023-08-09T14:31:28.326Z">
+<meta property="article:author" content="Adagio">
+<meta property="article:tag" content="Dubbo">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://pic.adagio-project.icu/pic/%E5%A4%B4%E5%83%8F.png"><link rel="shortcut icon" href="http://pic.adagio-project.icu/pic/favicon.ico"><link rel="canonical" href="http://localhost:4000/2023/02/10/Dubbo/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Dubbo学习笔记',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2023-08-09 22:31:28'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = (url,id = false) => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      if (id) link.id = id
+      link.onerror = reject
+      link.onload = link.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        link.onload = link.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="/css/custom.css" media="defer" onload="this.media='all'"><meta name="generator" content="Hexo 6.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="http://pic.adagio-project.icu/pic/%E5%A4%B4%E5%83%8F.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">5</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">5</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">4</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('http://pic.adagio-project.icu/pic/%E5%A3%81%E7%BA%B8.jpeg')"><nav id="nav"><span id="blog-info"><a href="/" title="Adagio Blog"><span class="site-name">Adagio Blog</span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Dubbo学习笔记</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-02-10T01:16:55.000Z" title="发表于 2023-02-10 09:16:55">2023-02-10</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2023-08-09T14:31:28.326Z" title="更新于 2023-08-09 22:31:28">2023-08-09</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">学习笔记</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Dubbo学习笔记"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h2 id="一-Dubbo前置相关概念"><a href="#一-Dubbo前置相关概念" class="headerlink" title="一.Dubbo前置相关概念"></a>一.Dubbo前置相关概念</h2><h3 id="大型互联网项目架构目标"><a href="#大型互联网项目架构目标" class="headerlink" title="大型互联网项目架构目标"></a>大型互联网项目架构目标</h3><h4 id="衡量网站的性能指标"><a href="#衡量网站的性能指标" class="headerlink" title="衡量网站的性能指标:"></a>衡量网站的性能指标:</h4><ul>
+<li><p>响应时间:指执行一个请求从开始到最后收到响应数据所花费的总体时间。</p>
+</li>
+<li><p>并发数:指系统同时能处理的请求数量。</p>
+<ul>
+<li><p>并发连接数:指的是客户端向服务器发起请求，并建立了TCP连接。每秒钟服务器连接的总TCP数量</p>
+</li>
+<li><p>请求数:也称为QPS(Query Per Second)指每秒多少请求.</p>
+</li>
+<li><p>并发用户数:单位时间内有多少用户</p>
+</li>
+</ul>
+</li>
+<li><p>吞吐量:指单位时间内系统能处理的请求数量。</p>
+<ul>
+<li><p>QPS: Query Per Second每秒查询数。</p>
+</li>
+<li><p>TPS: Transactions Per Second每秒事务数。</p>
+</li>
+<li><p>一个事务是指一个客户机向服务器发送请求然后服务器做出反应的过程。客户机在发送请求时开始计时，收到服务器响应后结束计时，以此来计算使用的时间和完成的事务个数。</p>
+</li>
+<li><p>一个页面的一次访问，只会形成一个TPS;但一次页面请求，可能产生多次对服务器的请求，就会有多个QPS</p>
+</li>
+</ul>
+</li>
+<li><p>高性能:提供快速的访问体验。</p>
+</li>
+<li><p>高可用:网站服务一直可以正常访问。</p>
+</li>
+<li><p>可伸缩:通过硬件增加&#x2F;减少，提高&#x2F;降低处理能力。</p>
+</li>
+<li><p>高可扩展:系统间耦合低，方便的通过新增&#x2F;移除方式，增加&#x2F;减少新的功能&#x2F;模块。</p>
+</li>
+<li><p>安全性:提供网站安全访问和数据加密，安全存储等策略。敏捷性:随需应变，快速响应。</p>
+</li>
+</ul>
+<h3 id="集群和分布式"><a href="#集群和分布式" class="headerlink" title="集群和分布式"></a>集群和分布式</h3><ul>
+<li>集群:很多“人”一起，干一样的事。</li>
+<li>分布式:很多“人”一起，干不一样的事。这些不一样的事，合起来是一件大事。</li>
+</ul>
+<h6 id="单机架构"><a href="#单机架构" class="headerlink" title="单机架构"></a>单机架构</h6><p><img src="http://pic.adagio-project.icu/pic/image-20230209223951002.png" alt="image-20230209223951002"></p>
+<h6 id="集群架构"><a href="#集群架构" class="headerlink" title="集群架构"></a>集群架构</h6><p><img src="http://pic.adagio-project.icu/pic/image-20230209224154902.png" alt="image-20230209224154902"></p>
+<h6 id="集群分布式架构"><a href="#集群分布式架构" class="headerlink" title="集群分布式架构"></a>集群分布式架构</h6><p><img src="http://pic.adagio-project.icu/pic/image-20230209224312550.png" alt="image-20230209224312550"></p>
+<h3 id="架构演进"><a href="#架构演进" class="headerlink" title="架构演进"></a>架构演进</h3><p><img src="http://pic.adagio-project.icu/pic/image-20230210210445618.png" alt="image-20230210210445618"></p>
+<p><img src="http://pic.adagio-project.icu/pic/image-20230210210755596.png" alt="image-20230210210755596"></p>
+<p><img src="http://pic.adagio-project.icu/pic/image-20230210211155836.png" alt="image-20230210211155836"></p>
+<p><img src="http://pic.adagio-project.icu/pic/image-20230210211446701.png" alt="image-20230210211446701"></p>
+<p><img src="http://pic.adagio-project.icu/pic/image-20230210211655115.png" alt="image-20230210211655115"></p>
+<p><img src="http://pic.adagio-project.icu/pic/image-20230210211817389.png" alt="image-20230210211817389"></p>
+<h2 id="二-Dubbo入门"><a href="#二-Dubbo入门" class="headerlink" title="二.Dubbo入门"></a>二.Dubbo入门</h2><h3 id="Dubbo概念"><a href="#Dubbo概念" class="headerlink" title="Dubbo概念"></a>Dubbo概念</h3><ul>
+<li><p>Dubbo是阿里巴巴公司开源的一个高性能，轻量级的RPC框架</p>
+</li>
+<li><p>致力于提供高性能和透明化的RP(远程服务调用方案，以及SOA服务治理方案,</p>
+</li>
+<li><p>官网: <a target="_blank" rel="noopener" href="http://dubbo.apache.org/">http://dubbo.apache.org</a></p>
+</li>
+</ul>
+<h3 id="Dubbo架构"><a href="#Dubbo架构" class="headerlink" title="Dubbo架构"></a>Dubbo架构</h3><p><img src="http://pic.adagio-project.icu/pic/image-20230210224147434.png" alt="image-20230210224147434"></p>
+<h3 id="Zookeeper安装"><a href="#Zookeeper安装" class="headerlink" title="Zookeeper安装"></a>Zookeeper安装</h3><p>ps：Zookeeper只是充当注册中心作用，你也可以使用其他注册中心，如nacos，eureka</p>
+<ol>
+<li>上传zookeeper安装包</li>
+</ol>
+<p><img src="http://pic.adagio-project.icu/pic/image-20230211104723862.png" alt="image-20230211104723862"></p>
+<ol start="2">
+<li><p>在&#x2F;opt目录下创建zookeeper文件夹，把安装包移动到该目录下并解压</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">打开 opt目录</span></span><br><span class="line">cd /opt</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">创建zooKeeper目录</span></span><br><span class="line">mkdir  zooKeeper</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">将zookeeper安装包移动到 /opt/zooKeeper</span></span><br><span class="line">mv apache-zookeeper-3.5.6-bin.tar.gz /opt/zookeeper/</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">解压该文件</span></span><br><span class="line">tar -zxvf apache-zookeeper-3.5.6-bin.tar.gz</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>修改zoo.cfg</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">打开目录</span></span><br><span class="line">cd /opt/zooKeeper/</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">创建zooKeeper存储目录</span></span><br><span class="line">mkdir  zkdata</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">修改zoo.cfg</span></span><br><span class="line">vim /opt/zooKeeper/apache-zooKeeper-3.5.6-bin/conf/zoo.cfg</span><br></pre></td></tr></table></figure>
+
+<p>把dataDir改成”dataDir&#x3D;&#x2F;opt&#x2F;zookeeper&#x2F;zkdata”</p>
+<p><img src="http://pic.adagio-project.icu/pic/image-20230211110245460.png" alt="image-20230211110245460"></p>
+</li>
+<li><p>启动zookeeper</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cd /opt/zooKeeper/apache-zooKeeper-3.5.6-bin/bin/</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">启动</span></span><br><span class="line"> ./zkServer.sh  start</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://pic.adagio-project.icu/pic/image-20230211110747838.png" alt="image-20230211110747838"></p>
+</li>
+</ol>
+<p>​		看到上述信息说明启动成功</p>
+<p>​		<img src="http://pic.adagio-project.icu/pic/image-20230211110914105.png"></p>
+<p>​		可以用 .&#x2F;zkServer.sh status来查看zookeeper的启动状态</p>
+<h3 id="Dubbo快速入门"><a href="#Dubbo快速入门" class="headerlink" title="Dubbo快速入门"></a>Dubbo快速入门</h3><ul>
+<li><p>原始写法</p>
+<p>通过在UserController中引入UserService依赖达到调用目的</p>
+<p><img src="http://pic.adagio-project.icu/pic/image-20230211203405156.png" alt="image-20230211203405156"></p>
+<p><img src="http://pic.adagio-project.icu/pic/image-20230211203535763.png"></p>
+</li>
+<li><p>Dubbo写法</p>
+<ol>
+<li><p>将service服务和controller服务注册到zookeeper注册中心</p>
+<p>service：</p>
+<p><img src="http://pic.adagio-project.icu/pic/image-20230211204423133.png" alt="image-20230211204423133"></p>
+<p>controller：</p>
+<p><img src="http://pic.adagio-project.icu/pic/image-20230211204510742.png" alt="image-20230211204510742"></p>
+</li>
+<li><p>对UserServiceImpl代码进行修改，具体修改如下</p>
+<p><img src="http://pic.adagio-project.icu/pic/image-20230211204307632.png" alt="image-20230211204307632"></p>
+<p>注意，这里的Service注解不是Spring的注解，而是dubbo的注解</p>
+</li>
+<li><p>对UserController代码进行修改，具体操作如下</p>
+<p><img src="http://pic.adagio-project.icu/pic/image-20230211204353978.png" alt="image-20230211204353978"></p>
+</li>
+<li><p>将Controller模块中对Service的依赖删除</p>
+<p><img src="http://pic.adagio-project.icu/pic/image-20230211210445688.png" alt="image-20230211210445688"></p>
+</li>
+<li><p>此时Controller中会有找不到UserService的报错，我们只需要在Controller服务里创建一个全路径一样的接口就行了</p>
+<p><img src="http://pic.adagio-project.icu/pic/image-20230211210615250.png" alt="image-20230211210615250"></p>
+</li>
+<li><p>然后就可以启动两个服务，调用并查看结果</p>
+<p><img src="http://pic.adagio-project.icu/pic/image-20230211210709014.png" alt="image-20230211210709014"></p>
+<p><img src="http://pic.adagio-project.icu/pic/image-20230211210739909.png" alt="image-20230211210739909"></p>
+</li>
+</ol>
+</li>
+<li><p>Dubbo写法升级</p>
+<p>因为在实际开发中，我们不可能去协调两个服务开发部门让他们去协商接口叫什么名字，并且，这些接口既在Service服务中存在，也在Controller服务中存在，比较冗余，所以接下来我们会把这些接口给独立出来</p>
+<ol>
+<li><p>创建一个公共接口模块</p>
+<p><img src="http://pic.adagio-project.icu/pic/image-20230211211534861.png" alt="image-20230211211534861"></p>
+</li>
+<li><p>让Controller和Service模块依赖于公共接口模块</p>
+<p><img src="http://pic.adagio-project.icu/pic/image-20230211211633252.png" alt="image-20230211211633252"></p>
+</li>
+<li><p>删除Controller和Service中的接口</p>
+</li>
+<li><p>测试运行</p>
+<p><img src="http://pic.adagio-project.icu/pic/image-20230211211922455.png" alt="image-20230211211922455"></p>
+</li>
+</ol>
+</li>
+</ul>
+<h2 id="三-Dubbo高级特性"><a href="#三-Dubbo高级特性" class="headerlink" title="三.Dubbo高级特性"></a>三.Dubbo高级特性</h2><h3 id="dubbo-admin管理平台"><a href="#dubbo-admin管理平台" class="headerlink" title="dubbo-admin管理平台"></a>dubbo-admin管理平台</h3><ul>
+<li><p>dubbo-admin作用</p>
+<ol>
+<li>dubbo-admin管理平台，是图形化的服务管理页面</li>
+<li>从注册中心中获取到所有的提供者&#x2F;消费者进行配置管理</li>
+<li>路由规则、动态配置、服务降级、访问控制、权重调整、负载均衡等管理功能</li>
+</ol>
+</li>
+<li><p>dubbo-admin的安装</p>
+<ol>
+<li>dubbo-admin是一个前后端分离的项目。前端使用vue，后端使用springboot</li>
+<li>安装dubbo-admin其实就是部署该项目</li>
+</ol>
+<p>具体流程如下：</p>
+<ol>
+<li><p>github上克隆dubbo-admin源码或者下载他的压缩包，随后解压</p>
+<p><img src="http://pic.adagio-project.icu/pic/image-20230211221612558.png" alt="image-20230211221612558"></p>
+</li>
+<li><p>安装node.js(因为前端使用vue构建的，需要node.js)</p>
+</li>
+<li><p>进入配置文件修改zookeeper地址</p>
+<p><img src="http://pic.adagio-project.icu/pic/image-20230211221958692.png" alt="image-20230211221958692"></p>
+<p><img src="http://pic.adagio-project.icu/pic/image-20230211222023779.png" alt="image-20230211222023779"></p>
+</li>
+<li><p>在 dubbo-admin-develop 目录执行打包命令，mvn clean package</p>
+<p><img src="http://pic.adagio-project.icu/pic/image-20230211222338863.png" alt="image-20230211222338863"></p>
+</li>
+<li><p>启动后端，切换目录到</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dubbo-Admin-develop\dubbo-admin-distribution\target&gt;</span><br></pre></td></tr></table></figure>
+
+<p>然后执行如下命令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java -jar .\dubbo-admin-0.1.jar</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>启动前端，切换目录到</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dubbo-admin-develop\dubbo-admin-develop\dubbo-admin-ui</span><br></pre></td></tr></table></figure>
+
+<p>执行如下命令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm run dev</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>访问<a href="http://localhost:8081/">http://localhost:8081</a></p>
+<p><img src="http://pic.adagio-project.icu/pic/image-20230212223943532.png" alt="image-20230212223943532"></p>
+</li>
+</ol>
+</li>
+</ul>
+<h3 id="dubbo常用高级配置"><a href="#dubbo常用高级配置" class="headerlink" title="dubbo常用高级配置"></a>dubbo常用高级配置</h3><h4 id="1-序列化"><a href="#1-序列化" class="headerlink" title="1. 序列化"></a>1. 序列化</h4><p>众所周知，我们在java网络传输对象的过程中需要将对象进行序列化操作，把他转换成流对象进行传输，在dubbo的操作过程中，框架底层已经实现了对序列化反序列化的方法的封装，所以我们只需要给将被传输的对象的类实现Serializable接口就行。</p>
+<p>当消费者A调用生产者B的方法，我们必须保证A和B都拥有对此对象类的依赖，所以我们可以将这种类当作公共模块抽离出来</p>
+<p><img src="http://pic.adagio-project.icu/pic/image-20230212230912803.png" alt="image-20230212230912803"></p>
+<ol>
+<li>抽离公共模块，取名为dubbo_pojo</li>
+</ol>
+<p><img src="http://pic.adagio-project.icu/pic/image-20230212231310220.png" alt="image-20230212231310220"></p>
+<ol start="2">
+<li><p>在这个模块里写一个User类（先不实现Serializable接口）</p>
+<p><img src="http://pic.adagio-project.icu/pic/202302122326136.png" alt="image-20230212232637951"></p>
+</li>
+<li><p>在接口模块里写一个方法返回User对象，在Service里重写该方法，并在Controller模块里调用该方法</p>
+</li>
+<li><p>查看结果</p>
+<p><img src="http://pic.adagio-project.icu/pic/202302122329916.png" alt="image-20230212232904881"></p>
+<p><img src="http://pic.adagio-project.icu/pic/202302122329674.png" alt="image-20230212232925597"></p>
+<p>可见是由于没有实现Serializable接口所导致的</p>
+</li>
+<li><p>让User类实现Serializable接口并查看结果</p>
+<p><img src="http://pic.adagio-project.icu/pic/202302122330173.png" alt="image-20230212233036144"></p>
+</li>
+</ol>
+<h4 id="2-地址缓存"><a href="#2-地址缓存" class="headerlink" title="2. 地址缓存"></a>2. 地址缓存</h4><p>思考这样一个问题，如果注册中心挂了，服务是否能正常访问</p>
+<p>答案是可以，因为dubbo服务消费者在第一次调用时，会将服务提供方地址缓存到本地，以后在调用则不会访问注册中心。</p>
+<p>此时我们关闭了zookeeper，但是还能实现远程调用</p>
+<p><img src="http://pic.adagio-project.icu/pic/202302132030723.png" alt="image-20230213203050656"></p>
+<p><img src="http://pic.adagio-project.icu/pic/202302132031386.png" alt="image-20230213203120361"></p>
+<p>当服务提供者地址发生变化时，注册中心会通知服务消费者。</p>
+<h4 id="3-超时与重试"><a href="#3-超时与重试" class="headerlink" title="3. 超时与重试"></a>3. 超时与重试</h4><ol>
+<li><p>超时</p>
+<ul>
+<li>服务消费者在调用服务提供者的时候发生了阻塞、等待的情形，这个时候，服务消费者会一直等待下去。</li>
+<li>在某个峰值时刻，大量的请求都在同时请求服务消费者，会造成线程的大量堆积，势必会造成雪崩。</li>
+<li>dubbo利用超时机制来解决这个问题，设置一个超时时间，在这个时间段内，无法完成服务访问，则自动断开连接</li>
+<li>使用timeout属性配置超时时间，默认值1000，单位毫秒。</li>
+</ul>
+<p><img src="http://pic.adagio-project.icu/pic/202302132035099.png" alt="image-20230213203507054"></p>
+<p>我们可以在@Service或@Reference的注解内添加timeout属性，也可以在配置文件里面设置timeout的值</p>
+<p><img src="http://pic.adagio-project.icu/pic/202302132040686.png" alt="image-20230213204007663"></p>
+<p><img src="http://pic.adagio-project.icu/pic/202302132043564.png" alt="image-20230213204352531"></p>
+<p><img src="http://pic.adagio-project.icu/pic/202302132044149.png" alt="image-20230213204423120"></p>
+<p>下面写一个案例来测试一下超时</p>
+<ol>
+<li><p>首先设置超时时间和重试次数（以@Service举例）</p>
+<p><img src="http://pic.adagio-project.icu/pic/202302132046163.png" alt="image-20230213204632135"></p>
+</li>
+<li><p>写一个测试方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">testTimeout</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        Thread.sleep(<span class="number">2000</span>);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">RuntimeException</span>(e);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>测试结果</p>
+<p><img src="http://pic.adagio-project.icu/pic/202302132107460.png" alt="image-20230213210737259"></p>
+<p>建议将timeout配置在服务方，因为服务方知道自己方法执行的大概时间，可以给出更合理的超时时间</p>
+</li>
+</ol>
+</li>
+<li><p>重试</p>
+<ul>
+<li>设置了超时时间，在这个时间段内，无法完成服务访问，则自动断开连接。</li>
+<li>如果出现网络抖动，则这一次请求就会失败。</li>
+<li>Dubbo提供重试机制来避免类似问题的发生。</li>
+<li>通过retries属性来设置重试次数。默认为2次。</li>
+</ul>
+</li>
+</ol>
+<h4 id="4-多版本"><a href="#4-多版本" class="headerlink" title="4. 多版本"></a>4. 多版本</h4><p>灰度发布:当出现新功能时，会让一部分用户先使用新功能，用户反馈没问题时，再将所有用户迁移到新功能。</p>
+<p><img src="http://pic.adagio-project.icu/pic/202302132147515.png" alt="image-20230213214757414"></p>
+<p>dubbo中使用version属性来设置和调用同一个接口的不同版本</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Service(version = &quot;v1.0&quot;)</span><span class="comment">//老版本</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserServiceImpl</span> <span class="keyword">implements</span> <span class="title class_">UserService</span> &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> User <span class="title function_">findUserById</span><span class="params">(<span class="type">int</span> id)</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;old...&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">User</span>(id,<span class="string">&quot;zmx&quot;</span>,<span class="string">&quot;921&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Service(version = &quot;v2.0&quot;)</span><span class="comment">//新版本</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserServiceImpl2</span> <span class="keyword">implements</span> <span class="title class_">UserService</span> &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> User <span class="title function_">findUserById</span><span class="params">(<span class="type">int</span> id)</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;new...&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">User</span>(id,<span class="string">&quot;zmx&quot;</span>,<span class="string">&quot;921&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们可以在消费者端选择需要的版本</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserController</span> &#123;</span><br><span class="line">    <span class="comment">//@Reference(version = &quot;v1.0&quot;)</span></span><br><span class="line">    <span class="meta">@Reference(version = &quot;v2.0&quot;)</span><span class="comment">//选择需要的版本</span></span><br><span class="line">    <span class="keyword">private</span> UserService userService;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@GetMapping(&quot;/getUser&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> User <span class="title function_">findUserById</span><span class="params">(<span class="type">int</span> id)</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> userService.findUserById(id);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>分别调用v1.0和v2.0，结果分别打印了old和new，代表版本选择成功</p>
+<p><img src="http://pic.adagio-project.icu/pic/202302132156286.png" alt="image-20230213215642240"></p>
+<h4 id="5-负载均衡"><a href="#5-负载均衡" class="headerlink" title="5. 负载均衡"></a>5. 负载均衡</h4><p>当我们对某个服务提供者做了集群处理，那么调用哪个服务就是个问题，所以dubbo提供了负载均衡策略</p>
+<p><img src="http://pic.adagio-project.icu/pic/202302132212550.png" alt="image-20230213221215506"></p>
+<p>我们可以在消费者的@Reference注解里加一个loadBalance属性，在里面填写想要设置的负载均衡策略</p>
+<p>负载均衡策略(4种)∶</p>
+<ul>
+<li>Random:按权重随机，默认值。按权重设置随机概率。</li>
+<li>RoundRobin:按权重轮询。</li>
+<li>LeastActive:最少活跃调用数，相同活跃数的随机。</li>
+<li>ConsistentHash:一致性Hash，相同参数的请求总是发到同一提供者。</li>
+</ul>
+<p>ps：默认策略是随机策略，可在提供者端的@Service注解内添加weight属性来设置权重</p>
+<h4 id="6-集群容错"><a href="#6-集群容错" class="headerlink" title="6. 集群容错"></a>6. 集群容错</h4><p>如果在集群模式中，在消费者调用提供者的过程中出现了错误，就需要调用容错机制</p>
+<ol>
+<li><p>调用方式：</p>
+<p>在消费者的@Reference注解里加一个cluster属性，在里面填写想要设置的集群容错模式</p>
+</li>
+<li><p>集群容错模式：</p>
+</li>
+</ol>
+<ul>
+<li>Failover Cluster:失败重试。默认值。当出现失败，重试其它服务器，默认重试2次，使用retries配置。一般用于读操作，默认模式就是这个模式</li>
+<li>Failfast Cluster :快速失败，只发起—次调用，失败立即报错。通常用于写操作。</li>
+<li>Failsafe Cluster :失败安全，出现异常时，直接忽略。返回—个空结果。</li>
+<li>Failback Cluster :失败自动恢复，后台记录失败请求，定时重发。</li>
+<li>Forking Cluster :并行调用多个服务器，只要一个成功即返回</li>
+<li>Broadcast Cluster :广播调用所有提供者，逐个调用，任意一台报错则报错。</li>
+</ul>
+<h4 id="7-服务降级"><a href="#7-服务降级" class="headerlink" title="7. 服务降级"></a>7. 服务降级</h4><p>当提供者服务器里部署了多个服务，如果服务器的负载过大，我们必须舍弃掉一些相对不太重要的服务，这就是服务降级</p>
+<p><img src="http://pic.adagio-project.icu/pic/202302132230751.png" alt="image-20230213223033688"></p>
+<p>在消费者的@Reference注解里加一个mock属性，在里面填写想要设置的服务降级方式</p>
+<p>服务降级的方式：</p>
+<ul>
+<li>mock&#x3D;force:return null表示消费方对该服务的方法调用都直接返回null值，不发起远程调用。用来屏蔽不重要服务不可用时对调用方的影响。</li>
+<li>mock&#x3D;fail:return null表示消费方对该服务的方法调用在失败后，再返回null值，不抛异常。用来容忍不重要服务不稳定时对调用方的影响。</li>
+</ul>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="http://localhost:4000">Adagio</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://localhost:4000/2023/02/10/Dubbo/">http://localhost:4000/2023/02/10/Dubbo/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://localhost:4000" target="_blank">Adagio Blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Dubbo/">Dubbo</a></div><div class="post_share"><div class="social-share" data-image="http://pic.adagio-project.icu/pic/%E5%A4%B4%E5%83%8F.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2023/05/10/%E8%AE%B0%E5%BD%95%E4%B8%80%E4%B8%8B%E7%9C%8B%E5%85%AC%E5%8F%B8%E9%A1%B9%E7%9B%AE%E5%AD%A6%E5%88%B0%E7%9A%84%E6%96%B0%E4%B8%9C%E8%A5%BF/" title="记录一下看公司项目学到的新东西"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">记录一下看公司项目学到的新东西</div></div></a></div><div class="next-post pull-right"><a href="/2022/09/19/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" title="设计模式学习笔记"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">设计模式学习笔记</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2023/05/21/%E6%89%8B%E5%86%99%E4%B8%80%E4%B8%AARPC%E6%A1%86%E6%9E%B6%EF%BC%8C%E6%88%91%EF%BC%88%E5%B0%8F%E7%99%BD%EF%BC%89%E8%A1%8C%EF%BC%8C%E4%BD%A0%EF%BC%88%E5%A4%A7%E4%BD%AC%EF%BC%89%E8%82%AF%E5%AE%9A%E8%A1%8C/" title="手写一个RPC框架，我（小白）行，你（大佬）肯定行"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-05-21</div><div class="title">手写一个RPC框架，我（小白）行，你（大佬）肯定行</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="http://pic.adagio-project.icu/pic/%E5%A4%B4%E5%83%8F.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Adagio</div><div class="author-info__description"></div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">5</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">5</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">4</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://gitee.com/Adagio7_5" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a><a class="social-icon" href="mailto:1371522146@qq.com" target="_blank" title="Email"><i class="fas fa-envelope" style="color: #4a7dbe;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-Dubbo%E5%89%8D%E7%BD%AE%E7%9B%B8%E5%85%B3%E6%A6%82%E5%BF%B5"><span class="toc-number">1.</span> <span class="toc-text">一.Dubbo前置相关概念</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%A7%E5%9E%8B%E4%BA%92%E8%81%94%E7%BD%91%E9%A1%B9%E7%9B%AE%E6%9E%B6%E6%9E%84%E7%9B%AE%E6%A0%87"><span class="toc-number">1.1.</span> <span class="toc-text">大型互联网项目架构目标</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%A1%A1%E9%87%8F%E7%BD%91%E7%AB%99%E7%9A%84%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87"><span class="toc-number">1.1.1.</span> <span class="toc-text">衡量网站的性能指标:</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%9B%86%E7%BE%A4%E5%92%8C%E5%88%86%E5%B8%83%E5%BC%8F"><span class="toc-number">1.2.</span> <span class="toc-text">集群和分布式</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#%E5%8D%95%E6%9C%BA%E6%9E%B6%E6%9E%84"><span class="toc-number">1.2.0.0.1.</span> <span class="toc-text">单机架构</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#%E9%9B%86%E7%BE%A4%E6%9E%B6%E6%9E%84"><span class="toc-number">1.2.0.0.2.</span> <span class="toc-text">集群架构</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#%E9%9B%86%E7%BE%A4%E5%88%86%E5%B8%83%E5%BC%8F%E6%9E%B6%E6%9E%84"><span class="toc-number">1.2.0.0.3.</span> <span class="toc-text">集群分布式架构</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9E%B6%E6%9E%84%E6%BC%94%E8%BF%9B"><span class="toc-number">1.3.</span> <span class="toc-text">架构演进</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-Dubbo%E5%85%A5%E9%97%A8"><span class="toc-number">2.</span> <span class="toc-text">二.Dubbo入门</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Dubbo%E6%A6%82%E5%BF%B5"><span class="toc-number">2.1.</span> <span class="toc-text">Dubbo概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Dubbo%E6%9E%B6%E6%9E%84"><span class="toc-number">2.2.</span> <span class="toc-text">Dubbo架构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Zookeeper%E5%AE%89%E8%A3%85"><span class="toc-number">2.3.</span> <span class="toc-text">Zookeeper安装</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Dubbo%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8"><span class="toc-number">2.4.</span> <span class="toc-text">Dubbo快速入门</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-Dubbo%E9%AB%98%E7%BA%A7%E7%89%B9%E6%80%A7"><span class="toc-number">3.</span> <span class="toc-text">三.Dubbo高级特性</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#dubbo-admin%E7%AE%A1%E7%90%86%E5%B9%B3%E5%8F%B0"><span class="toc-number">3.1.</span> <span class="toc-text">dubbo-admin管理平台</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#dubbo%E5%B8%B8%E7%94%A8%E9%AB%98%E7%BA%A7%E9%85%8D%E7%BD%AE"><span class="toc-number">3.2.</span> <span class="toc-text">dubbo常用高级配置</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E5%BA%8F%E5%88%97%E5%8C%96"><span class="toc-number">3.2.1.</span> <span class="toc-text">1. 序列化</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E5%9C%B0%E5%9D%80%E7%BC%93%E5%AD%98"><span class="toc-number">3.2.2.</span> <span class="toc-text">2. 地址缓存</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E8%B6%85%E6%97%B6%E4%B8%8E%E9%87%8D%E8%AF%95"><span class="toc-number">3.2.3.</span> <span class="toc-text">3. 超时与重试</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-%E5%A4%9A%E7%89%88%E6%9C%AC"><span class="toc-number">3.2.4.</span> <span class="toc-text">4. 多版本</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1"><span class="toc-number">3.2.5.</span> <span class="toc-text">5. 负载均衡</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-%E9%9B%86%E7%BE%A4%E5%AE%B9%E9%94%99"><span class="toc-number">3.2.6.</span> <span class="toc-text">6. 集群容错</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#7-%E6%9C%8D%E5%8A%A1%E9%99%8D%E7%BA%A7"><span class="toc-number">3.2.7.</span> <span class="toc-text">7. 服务降级</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2023/06/30/Docker%E5%90%AF%E5%8A%A8Nginx%E9%83%A8%E7%BD%B2%E5%89%8D%E7%AB%AF%E9%A1%B9%E7%9B%AE/" title="Docker启动Nginx部署前端项目">Docker启动Nginx部署前端项目</a><time datetime="2023-06-30T11:40:35.000Z" title="发表于 2023-06-30 19:40:35">2023-06-30</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2023/05/21/%E6%89%8B%E5%86%99%E4%B8%80%E4%B8%AARPC%E6%A1%86%E6%9E%B6%EF%BC%8C%E6%88%91%EF%BC%88%E5%B0%8F%E7%99%BD%EF%BC%89%E8%A1%8C%EF%BC%8C%E4%BD%A0%EF%BC%88%E5%A4%A7%E4%BD%AC%EF%BC%89%E8%82%AF%E5%AE%9A%E8%A1%8C/" title="手写一个RPC框架，我（小白）行，你（大佬）肯定行">手写一个RPC框架，我（小白）行，你（大佬）肯定行</a><time datetime="2023-05-21T12:10:15.000Z" title="发表于 2023-05-21 20:10:15">2023-05-21</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2023/05/10/%E8%AE%B0%E5%BD%95%E4%B8%80%E4%B8%8B%E7%9C%8B%E5%85%AC%E5%8F%B8%E9%A1%B9%E7%9B%AE%E5%AD%A6%E5%88%B0%E7%9A%84%E6%96%B0%E4%B8%9C%E8%A5%BF/" title="记录一下看公司项目学到的新东西">记录一下看公司项目学到的新东西</a><time datetime="2023-05-10T08:40:03.000Z" title="发表于 2023-05-10 16:40:03">2023-05-10</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2023/02/10/Dubbo/" title="Dubbo学习笔记">Dubbo学习笔记</a><time datetime="2023-02-10T01:16:55.000Z" title="发表于 2023-02-10 09:16:55">2023-02-10</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2022/09/19/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" title="设计模式学习笔记">设计模式学习笔记</a><time datetime="2022-09-19T01:16:55.000Z" title="发表于 2022-09-19 09:16:55">2022-09-19</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2023 By Adagio</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/metingjs/dist/Meting.min.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/koharu.model.json"},"display":{"position":"left","width":150,"height":300},"mobile":{"show":false},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/"});</script></body></html>
